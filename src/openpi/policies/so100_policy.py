@@ -12,9 +12,8 @@ def make_so100_example() -> dict:
     """Creates a random input example for the Libero policy."""
     return {
         "observation/state": np.random.rand(SO100_ACTION_DIM),
-        "observation/images.main.left": np.random.randint(256, size=(224, 224, 3), dtype=np.uint8),
-        "observation/images.secondary_0": np.random.randint(256, size=(224, 224, 3), dtype=np.uint8),
-        "observation/images.secondary_1": np.random.randint(256, size=(224, 224, 3), dtype=np.uint8),
+        "observation/images.front": np.random.randint(256, size=(224, 224, 3), dtype=np.uint8),
+        "observation/images.wrist": np.random.randint(256, size=(224, 224, 3), dtype=np.uint8),
         "prompt": "do something",
     }
 
@@ -79,11 +78,10 @@ class S0100Inputs(transforms.DataTransformFn):
 
         # Pad actions to the model action dimension. Keep this for your own dataset.
         # Actions are only available during training.
-        if "action" in data:
-            print("padding actions")
+        if "actions" in data:
             # We are padding to the model action dim.
             # For pi0-FAST, this is a no-op (since action_dim = 7).
-            actions = transforms.pad_to_dim(data["action"], self.action_dim)
+            actions = transforms.pad_to_dim(data["actions"], self.action_dim)
             inputs["actions"] = actions
 
         # Pass the prompt (aka language instruction) to the model.
